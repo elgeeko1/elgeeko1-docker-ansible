@@ -3,3 +3,4 @@ docker_compose_version: 1.29.1
 
 # enable ipv6 in docker?
 docker_ipv6_enabled: false
+docker_ipv6_cidr: "fd00::/80"
