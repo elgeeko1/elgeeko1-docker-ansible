@@ -1,0 +1,6 @@
+{
+  "ipv6": {{ docker_ipv6_enabled | lower }},
+{% if docker_ipv6_cidr is defined %}
+  "fixed-cidr-v6": "{{ docker_ipv6_cidr }}"
+{% endif %}
+}

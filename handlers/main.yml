@@ -1,0 +1,11 @@
+---
+- name: docker_restart
+  service:
+    name: docker
+    state: restarted
+  become: true
+
+- name: reboot
+  reboot:
+    msg: "Ansible reboot - docker role"
+  become: true

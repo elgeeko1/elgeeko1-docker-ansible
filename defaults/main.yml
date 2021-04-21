@@ -1,0 +1,5 @@
+# version of docker-compose to install
+docker_compose_version: 1.29.1
+
+# enable ipv6 in docker?
+docker_ipv6_enabled: false

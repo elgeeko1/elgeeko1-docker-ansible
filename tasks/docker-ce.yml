@@ -1,0 +1,36 @@
+---
+- name: Add docker GPG apt key
+  apt_key:
+    url: https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }}/gpg
+  become: true
+
+- name: Add docker apt repository
+  apt_repository:
+    repo: "deb https://download.docker.com/{{ ansible_system | lower}}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+  become: true
+
+- name: Install docker-ce
+  apt:
+    pkg: docker-ce
+    state: latest
+    update_cache: true
+  become: true
+
+- name: Install docker module for python
+  pip:
+    name: docker
+    state: latest
+  become: true
+
+- name: Add {{ ansible_user }} to docker group
+  user:
+    name: "{{ ansible_user }}"
+    groups:
+      - docker
+    append: true
+  become: true
+  notify: reboot
+  # yes you really need to reboot on group change, since Ansible
+  # connects over an SSH session, it's the most
+  # sure-fire way to ensure permissions take effect
+  # for something like docker that runs as a service.
