@@ -1,0 +1,9 @@
+galaxy_info:
+  role_name: docker
+  author: elgeeko1
+  description: "Ansible role to install docker into debian-based systems."
+  license: MIT
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
