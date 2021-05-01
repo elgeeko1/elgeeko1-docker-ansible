@@ -1,7 +1,7 @@
 galaxy_info:
-  role_name: docker
+  role_name: elgeeko1-docker-ansible
   author: elgeeko1
-  description: "Ansible role to install docker into debian-based systems."
+  description: "Ansible role to install docker into Ubuntu systems."
   license: MIT
   platforms:
     - name: Ubuntu
