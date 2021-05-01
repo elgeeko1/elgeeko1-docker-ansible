@@ -10,7 +10,7 @@ Provisioning host:
 - ansible 2.9 or later
 
 Host that will run docker
-- Ubuntu 18.04 or later
+- Ubuntu 18.04 or later (or Debian-based Linux distro running apt)
 
 # How to use this role
 ### Method 1: Install using ansible-galaxy
