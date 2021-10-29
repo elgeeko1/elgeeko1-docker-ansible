@@ -1,12 +1,27 @@
 ---
+- name: apt update cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600 # 1 hr
+  become: true
+
 - name: Install docker engine
-  include_tasks: docker-ce.yml
+  ansible.builtin.import_tasks: docker-ce.yml
 
 - name: Configure docker IPv6
-  include_tasks: docker-ipv6.yml
+  ansible.builtin.import_tasks: docker-ipv6.yml
 
 - name: Install docker-compose
-  include_tasks: docker-compose.yml
+  ansible.builtin.import_tasks: docker-compose.yml
 
 - name: Flush handlers
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: docker prune
+  community.docker.docker_prune:
+    builder_cache: true
+    containers: true
+    images: true
+    networks: true
+    volumes: true
+  when: docker_prune

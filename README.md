@@ -4,6 +4,7 @@ Features:
 - installs docker python module
 - installs docker-compose
 - (optional) configures docker with ipv6 support
+- (optional) performs a docker system prune
 
 # Requirements
 Provisioning host:
