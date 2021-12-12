@@ -1,10 +1,4 @@
 ---
-- name: apt install iptables-persistent
-  ansible.builtin.apt:
-    pkg: iptables-persistent
-    state: latest
-  become: true
-
 - name: Configure IPv6 in docker
   ansible.builtin.template:
     src:  "docker-daemon.json.j2"
@@ -15,12 +9,11 @@
 - name: Configure Linux kernel to allow IP forwarding
   ansible.posix.sysctl:
     name: net.ipv4.conf.all.forwarding
-    value: '1'
+    value: "{{ docker_ipv6_enabled | ternary('1', '0') }}"
     sysctl_set: true
     state: present
     reload: true
   become: true
-  when: docker_ipv6_enabled
   notify: docker_restart
 
 - name: Configure Linux kernel to allow IP forwarding at startup
@@ -28,40 +21,4 @@
     src: sysctl-ipv6-forwarding.sh.j2
     dest: /etc/network/if-pre-up.d/sysctl-ipv6-forwarding
     mode: 0755
-  become: true
-
-- name: Enable iptables ipv4 forward policy
-  ansible.builtin.iptables:
-    ip_version: ipv4
-    table: filter
-    chain: FORWARD
-    jump: ACCEPT
-  become: true
-  when: docker_ipv6_enabled
-  notify: docker_restart
-
-- name: Enable iptables ipv4 forward policy at startup
-  ansible.builtin.template:
-    src:   rules.v4.j2
-    dest:  /etc/iptables/rules.v4
-    mode:  0600
-  become: true
-
-- name: Create iptables ipv6 NAT chain
-  ansible.builtin.iptables:
-    ip_version: ipv6
-    table: nat
-    chain: POSTROUTING
-    source: "{{ docker_ipv6_cidr }}"
-    out_interface: "!docker0"
-    jump: MASQUERADE
-  become: true
-  when: docker_ipv6_enabled
-  notify: docker_restart
-
-- name: Create iptables ipv6 NAT chain at startup
-  ansible.builtin.template:
-    src:   rules.v6.j2
-    dest:  /etc/iptables/rules.v6
-    mode:  0600
   become: true
