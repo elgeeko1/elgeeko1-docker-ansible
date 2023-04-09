@@ -14,7 +14,7 @@
     state: present
     reload: true
   become: true
-  notify: docker_restart
+  changed_when: false
 
 - name: Configure Linux kernel to allow IP forwarding at startup
   ansible.builtin.template:
