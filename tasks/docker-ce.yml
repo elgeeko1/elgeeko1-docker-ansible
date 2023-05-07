@@ -2,6 +2,7 @@
 - name: Add docker GPG apt key
   ansible.builtin.apt_key:
     url: https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }}/gpg
+    keyring: /etc/apt/trusted.gpg.d/docker.gpg
   become: true
 
 - name: Add docker apt repository
