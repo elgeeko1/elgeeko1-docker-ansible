@@ -14,6 +14,23 @@ Host that will run docker
 - Ubuntu 18.04 or later (or Debian-based Linux distro running apt)
 
 # How to use this role
+
+Add this role to your Ansible playbook file.
+```yaml
+- name: docker role
+  role: elgeeko1-docker-ansible
+```
+
+## Optional variables
+
+- `docker_prune`: prune docker containers, images and networks. Defaults to `true`
+
+To enable IPv6 support, add the following variables:
+- `docker_ipv6_enabled: true`: enable IPv6
+- `docker_ipv6_cidr: "fd00::/80"`: set the IP address allocation and netmask for the IPv6 docker network. Replace the default value with the subnet appropriate for your network.
+
+
+# How to install this role
 ### Method 1: Install using ansible-galaxy
 
 The most robust way to install this role is to use ansible-galaxy,
