@@ -4,7 +4,7 @@
     src:  "docker-daemon.json.j2"
     dest: /etc/docker/daemon.json
   become: true
-  notify: docker_restart
+  register: docker_config
 
 - name: Configure Linux kernel to allow IP forwarding
   ansible.posix.sysctl:
@@ -22,3 +22,10 @@
     dest: /etc/network/if-pre-up.d/sysctl-ipv6-forwarding
     mode: 0755
   become: true
+
+- name: Restart docker service to apply changes
+  ansible.builtin.service:
+    name: docker
+    state: restarted
+  become: true
+  when: docker_config.changed
