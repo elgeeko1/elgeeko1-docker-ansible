@@ -14,9 +14,6 @@
 - name: Install docker-compose
   ansible.builtin.import_tasks: docker-compose.yml
 
-- name: Flush handlers
-  ansible.builtin.meta: flush_handlers
-
 - name: docker prune
   community.docker.docker_prune:
     builder_cache: true
@@ -25,3 +22,5 @@
     networks: true
     volumes: true
   when: docker_prune
+  become: true  # allows pruning even if ansible_user
+                # is not yet a member of docker group
