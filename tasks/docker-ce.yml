@@ -46,4 +46,6 @@
   ansible.builtin.reboot:
     msg: "Ansible reboot - docker role"
   become: true
-  when: dockergroup.changed
+  when:
+    - dockergroup.changed
+    - inventory_hostname != "localhost"
