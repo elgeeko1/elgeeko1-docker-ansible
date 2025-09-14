@@ -1,51 +1,55 @@
+# SPDX-FileCopyrightText: (c) 2021-2025 Jeff C. Jensen
+# SPDX-License-Identifier: MIT
+#
+# Modifications Copyright (c) 2024 Xronos Inc.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# This file contains portions from Jeff C. Jensen under MIT 
+# and modifications by Xronos Inc. under BSD-3-Clause.
 ---
-- name: Add docker GPG apt key
-  ansible.builtin.apt_key:
+# download the gpg key and save with extension ".asc", which bypasses the need to dearmor.
+# this is the workaround for the deprecation of ansible.builtin.apt_key for repositories
+# that are not yet 
+- name: Apt import docker gpg
+  become: true
+  ansible.builtin.get_url:
     url: https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }}/gpg
-    keyring: /etc/apt/trusted.gpg.d/docker.gpg
-  become: true
+    dest: /etc/apt/trusted.gpg.d/docker.asc
+    mode: 0644
 
-- name: Add docker apt repository
-  ansible.builtin.apt_repository:
-    repo: "deb https://download.docker.com/{{ ansible_system | lower}}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
-  become: true
+- name: Apt docker apt repository
   register: dockerrepo
-
-- name: apt update cache
-  ansible.builtin.apt:
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/docker.asc] https://download.docker.com/{{ ansible_system | lower}}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
     update_cache: true
-  become: true
-  when: dockerrepo.changed
 
-- name: Install docker-ce
+- name: Apt install docker {{ docker_version if docker_version else 'latest' }}
+  become: true
   ansible.builtin.apt:
-    pkg: docker-ce
-    state: latest
-  become: true
+    pkg:
+      - docker-ce{{ '=' ~ docker_version if docker_version else '' }}
+      - docker-ce-cli{{ '=' ~ docker_version if docker_version else '' }}
+      - docker-ce-rootless-extras{{ '=' ~ docker_version if docker_version else '' }}
+      - docker-buildx-plugin{{ '=' ~ docker_buildx_version if docker_buildx_version else '' }}
+      - docker-compose-plugin{{ '=' ~ docker_compose_version if docker_compose_version else '' }}
 
-- name: Install docker module for python
-  ansible.builtin.pip:
-    name: docker
-    state: latest
+- name: Apt install docker module for python {{ python3_docker_version if python3_docker_version else 'latest' }}
   become: true
+  ansible.builtin.apt:
+    pkg: python3-docker{{ '=' ~ python3_docker_version if python3_docker_version else '' }}
 
 - name: Add {{ ansible_user }} to docker group
+  when: docker_add_ansible_user_to_docker_group
+  register: _docker_group
+  become: true
   ansible.builtin.user:
     name: "{{ ansible_user }}"
     groups:
       - docker
     append: true
-  become: true
-  register: dockergroup
 
-# yes you really need to reboot on group change, since Ansible
-# connects over an SSH session, it's the most
-# sure-fire way to ensure permissions take effect
-# for something like docker that runs as a service.
-- name: reboot
-  ansible.builtin.reboot:
-    msg: "Ansible reboot - docker role"
-  become: true
-  when:
-    - dockergroup.changed
-    - inventory_hostname != "localhost"
+- name: Reset connection to apply group change
+  changed_when: false
+  ansible.builtin.meta:
+    reset_connection

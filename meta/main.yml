@@ -1,11 +1,23 @@
+# SPDX-FileCopyrightText: (c) 2021-2025 Jeff C. Jensen
+# SPDX-License-Identifier: MIT
+#
+# Modifications Copyright (c) 2024 Xronos Inc.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# This file contains portions from Jeff C. Jensen under MIT 
+# and modifications by Xronos Inc. under BSD-3-Clause.
+---
 galaxy_info:
-  role_name: elgeeko1-docker-ansible
-  author: elgeeko1
-  description: "Ansible role to install docker into Ubuntu systems."
+  role_name: xronos_docker_ansible
+  min_ansible_version: "2.15"
   license: MIT
+  author: Jeff C. Jensen
+  description: "Ansible role to install docker into Ubuntu systems."
   platforms:
     - name: Ubuntu
       versions:
-        - all
+        - jammy
+        - noble
 collections:
   - community.docker
+  - community.general

@@ -1,9 +1,0 @@
-#!/bin/sh
-
-docker_ipv6_enabled={{ docker_ipv6_enabled | lower }}
-
-if [ ${docker_ipv6_enabled} ]; then
-  sysctl net.ipv4.conf.all.forwarding=1
-fi
-
-exit 0

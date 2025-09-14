@@ -1,75 +1,51 @@
 # Ansible role for installing docker on a host
+
 Features:
+
 - installs latest docker-ce
 - installs docker python module
 - installs docker-compose
-- (optional) configures docker with ipv6 support
+- (optional) installs support for docker buildx multiarchitecture builds
 - (optional) performs a docker system prune
 
-# Requirements
+## Requirements
+
 Provisioning host:
-- ansible 2.9 or later
+
+- ansible 2.15 or later
 
 Host that will run docker
-- Ubuntu 18.04 or later (or Debian-based Linux distro running apt)
 
-# How to use this role
+- Ubuntu 22.04 or 24.04
+
+## How to use this role
 
 Add this role to your Ansible playbook file.
+
 ```yaml
-- name: docker role
-  role: elgeeko1-docker-ansible
+- name: install docker
+  role: xronos_docker_ansible
 ```
 
-## Optional variables
+## Variables
 
-- `docker_prune`: prune docker containers, images and networks. Defaults to `true`
+- `docker_prune`: prune docker containers, images and networks. Default is `false`.
+- `docker_add_ansible_user_to_docker_group`: Add current Ansible user to the docker group. Default is `true`.
 
-To enable IPv6 support, add the following variables:
-- `docker_ipv6_enabled: true`: enable IPv6
-- `docker_ipv6_cidr: "fd00::/80"`: set the IP address allocation and netmask for the IPv6 docker network. Replace the default value with the subnet appropriate for your network.
+### multiarchitecture builds
 
+- `docker_multiarch`: install QEMU. Default is `false`.
+- `docker_multiarch_containerd_snapshot`: use containerd-shapshot and create a buildx builder using the `docker-container` driver. Ignored if `docker_multiarch` is false. Defaults is `false`.
+- `docker_multiarch_containerd_builder_name`: docker buildx container name for multiarchitecture builds. Used only if `docker_multiarch` and `docker_multiarch_containerd_snapshot` are true. Default is `multiarch`.
 
-# How to install this role
-### Method 1: Install using ansible-galaxy
+### docker authorization
 
-The most robust way to install this role is to use ansible-galaxy,
-which is installed with ansible by default. ansible-galaxy is effectively a package manager for ansible. It installs roles
-from the community, or from private git repos, into your local machine for use in your playbooks.
+- `docker_auth`: docker authentication token. When present, is written to the user's docker config.json. Default is empty.
+- `docker_auth_registry`: doker authentication registry. Default is "https://index.docker.io/v1/". Applies only if `docker_auth` is set.
 
-Start by adding this role to an ansible-galaxy dependency file. Typically this file lives alongside your playbook file and by convention is named `requirements.yml`.
+### Versions
 
-Add the following section to `requirements.yml`:
-
-```
-roles:
-  - name: elgeeko1-docker-ansible
-    src: https://github.com/elgeeko1/elgeeko1-docker-ansible
-    version: main
-```
-
-If there is already a `roles` section, simply append this role to
-add it as a dependency.
-
-Then, install the role using ansible-galaxy:
-
-`ansible-galaxy install -r requirements.yml -v`
-
-### Method 2: Clone this repository into a `roles` directory
-
-Use this method if you plan to modify this role, or if for some
-reason the ansible-galaxy method fails.
-
-Starting from your playbook directory, change into the `roles`
-directory and clone:
-
-```
-$ ls
- > playbook.yml
- > roles/
-$ cd roles/
-roles$ git clone https://github.com/elgeeko1/elgeeko1-docker-ansible
-```
-
-# References
-- https://medium.com/@skleeschulte/how-to-enable-ipv6-for-docker-containers-on-ubuntu-18-04-c68394a219a2
+- `docker_version`: version of docker-ce to install. Default is empty (latest).
+- `docker_buildx_version`: version of docker-buildx-plugin to install. Default is empty (latest).
+- `docker_compose_version`: version of docker-compose-plugin to install. Default is empty (latest).
+- `python3_docker_version`: version of python3-docker package to install. Default is empty (latest).

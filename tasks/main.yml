@@ -1,26 +1,35 @@
+# SPDX-FileCopyrightText: (c) 2021-2025 Jeff C. Jensen
+# SPDX-License-Identifier: MIT
+#
+# Modifications Copyright (c) 2024 Xronos Inc.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# This file contains portions from Jeff C. Jensen under MIT 
+# and modifications by Xronos Inc. under BSD-3-Clause.
 ---
 - name: apt update cache
+  become: true
   ansible.builtin.apt:
     update_cache: true
     cache_valid_time: 3600 # 1 hr
-  become: true
 
 - name: Install docker engine
   ansible.builtin.import_tasks: docker-ce.yml
 
-- name: Configure docker IPv6
-  ansible.builtin.import_tasks: docker-ipv6.yml
+- name: Configure docker for multiarch building
+  when: docker_multiarch
+  ansible.builtin.include_tasks: multiarch.yml
 
-- name: Install docker-compose
-  ansible.builtin.import_tasks: docker-compose.yml
+- name: Configure docker authentication
+  when: docker_auth != ""
+  ansible.builtin.include_tasks: auth.yml
 
 - name: docker prune
+  when: docker_prune
+  become: true  # ansible_user may not yet be in docker group
   community.docker.docker_prune:
     builder_cache: true
     containers: true
     images: true
     networks: true
     volumes: true
-  when: docker_prune
-  become: true  # allows pruning even if ansible_user
-                # is not yet a member of docker group

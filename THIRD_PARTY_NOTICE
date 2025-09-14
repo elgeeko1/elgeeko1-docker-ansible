@@ -1,0 +1,16 @@
+THIRD-PARTY SOFTWARE NOTICES AND INFORMATION
+
+This project includes third-party software components, which are distributed under the
+following licenses. Full licenses and notices are provided in the
+[third-party-licenses](third-party-licenses) subdirectory.
+
+---
+
+Component: xronos_docker_ansible
+Version: c7d738c0d73860c07dc85221501ee05f96a99fe4 (2025-02-07)
+License: BSD-3-Clause
+License text: https://opensource.org/license/bsd-3-clause
+Source: https://github.com/xronos-inc/xronos_docker_ansible
+
+For the full license text, see:
+[third-party-licenses/xronos_docker_ansbile_LICENSE](third-party-licenses/xronos_docker_ansbile_LICENSE)
