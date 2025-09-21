@@ -1,5 +1,9 @@
 # Ansible role for installing docker on a host
 
+> [!WARNING]
+> This role migrated to the Ansible Galaxy colleciton [elgeeko1/elgeeko1.linux](https://github.com/elgeeko1/elgeeko1.linux).
+The standalone role here is archived and is no longer maintained.
+
 Features:
 
 - installs latest docker-ce
